@@ -1,0 +1,126 @@
+﻿@model FileGenerator.Models.ClientModel
+
+@{
+    ViewBag.Title = "Dynamic Grid";
+}
+
+
+<div class="form-horizontal">
+
+    <h2>Dynamic Grid</h2>
+    <button type="button" class="btn btn-primary" onclick="$('#info').toggle('slow')">
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+    </button>
+    <div class="nav-justified" id="info" style="display:none;width:70%">
+        <br />
+        Dynamic grid, using this CURD you can insert new data by the small form down this message, than it will be added on the grid, you can also manipulate the data on the grid, and if you don not want to lose your data, is also possible to download and upload of your form, this way you can still manipulating your data later
+        <br />
+        <br />
+        Build with : <br />
+        <ul>
+            <li>MVC.NET</li>
+            <li>Jquery</li>
+            <li>Javascript</li>
+            <li>HTML5</li>
+            <li>Bootstrap</li>
+            <li>and some design patters</li>
+        </ul>
+    </div>
+</div>
+<div>
+    @Html.Partial("~/Views/Shared/_MessageError.cshtml")
+</div>
+<div class="form-horizontal">
+    <div class="pull-right">
+        @Html.Partial("~/Views/Shared/_DownloadFileModal.cshtml")
+        @Html.Partial("~/Views/Shared/_UploadFileModal.cshtml")
+    </div>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @onkeypress = "AutoRegister(event)" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", @type = "date", @onkeypress = "AutoRegister(event)" } })
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Points, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Points, new { htmlAttributes = new { @class = "form-control", @MaxLength = 9, @onkeypress = "AutoRegister(event)" } })
+                @Html.ValidationMessageFor(model => model.Points, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-default" onclick="AddUser()">
+                    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <button type="button" class="btn btn-default pull-right" onclick="ClearTable()">
+            <span class=" glyphicon glyphicon-remove - sign" aria-hidden="true"></span>Clear
+        </button>
+    </div>
+
+    <table class="table table-hover" id="tableClients">
+        <thead>
+            <tr>
+                <th>
+                    Position
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Points
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/Site")
+
+    @if (ViewBag.UploadedTable != null)
+    {
+        <script>
+            LoadTable('@Html.Raw(System.Text.Encoding.UTF8.GetString(ViewBag.UploadedTable))')
+        </script>
+    }
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <script>
+            WriteErrorMessage('@ViewBag.ErrorMessage');
+            ShowErrorBox();
+        </script>
+
+    }
+}
